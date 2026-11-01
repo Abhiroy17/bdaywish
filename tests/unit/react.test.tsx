@@ -192,6 +192,7 @@ describe('React birthday experience', () => {
     expect(media.autoplay).toBe(false);
     expect(HTMLMediaElement.prototype.play).not.toHaveBeenCalled();
     await act(async () => click('#play-local-song'));
+    vi.spyOn(media, 'paused', 'get').mockReturnValue(false);
     expect(document.querySelector('#play-local-song')?.getAttribute('aria-pressed')).toBe('true');
     expect(audio.isPlaying).toBe(false);
     click('#play-local-song');

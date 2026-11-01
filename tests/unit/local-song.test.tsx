@@ -16,8 +16,20 @@ function setup() {
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 describe('local MP3 lifecycle', () => {
+  it('does not call pause or load on untouched audio when entering quietly', () => {
+    const { result, media, play, pause, load } = setup();
+    expect(media.paused).toBe(true);
+    expect(media.networkState).toBe(media.NETWORK_EMPTY);
+    act(() => result.current.pause());
+    act(() => result.current.pause());
+    expect(result.current.status).toBe('paused');
+    expect(play).not.toHaveBeenCalled();
+    expect(pause).not.toHaveBeenCalled();
+    expect(load).not.toHaveBeenCalled();
+  });
+
   it('starts only on demand and follows native playback, buffering, pause, and ended events', async () => {
-    const { result, play, pause, onActivate } = setup();
+    const { result, media, play, pause, onActivate } = setup();
     expect(result.current.status).toBe('idle');
     expect(play).not.toHaveBeenCalled();
     act(() => result.current.events.onWaiting());
@@ -29,6 +41,7 @@ describe('local MP3 lifecycle', () => {
     expect(result.current.status).toBe('loading');
     act(() => result.current.events.onPlaying());
     expect(result.current.status).toBe('playing');
+    vi.spyOn(media, 'paused', 'get').mockReturnValue(false);
     act(() => result.current.pause());
     expect(pause).toHaveBeenCalled();
     act(() => result.current.events.onPlaying());

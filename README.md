@@ -169,6 +169,8 @@ At the last dependency verification, production dependencies had **zero vulnerab
 
 **Deployment regression check:** updated the secret-message unit test to assert the current “My best friend, my favourite person” message rather than the replaced lobster wording. The interaction and deployed copy are unchanged.
 
+**Linux WebKit deployment fixes:** quiet entry cancels pending playback without calling native `pause()` on already-paused audio, avoiding WebKit resource selection and unwanted MP3 requests. Regression tests retain zero-download checks both before and after quiet entry. The replay browser test waits for asynchronous instrumental playback (or the unsupported-audio fallback) before capturing the state that replay must preserve; no retries, sleeps, or browser exclusions were added.
+
 **1.0.0:** Seven personalized scenes, 28 notes, four editable scrapbook placeholders, original instrumental and artwork, candle wish celebration, full birthday letter, responsive touch UI, reduced-motion and no-JavaScript support, and automated validation.
 
 **Android refinement:** Galaxy Tab/Nothing-phone viewing priority, enlarged touch controls and text, safe-area and short-landscape header refinements, touch-safe hover behavior, native-swipe carousel boundary handling, and dedicated Android Chromium coverage.

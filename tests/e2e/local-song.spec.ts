@@ -6,6 +6,7 @@ test('provided MP3 plays on tap, seeks, pauses, resumes, and stops in the backgr
   await page.goto('/');
   const media = page.locator('#local-song');
   await expect(media).toHaveAttribute('preload', 'none');
+  expect(requests).toEqual([]);
   await page.locator('#enter-quiet').click();
   await expect(page.locator('#credits')).toBeFocused();
   expect(requests).toEqual([]);

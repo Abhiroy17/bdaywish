@@ -32,6 +32,13 @@ test('replay resets all bonus interactions while keeping music choice', async ({
   await expect(page.locator('#constellation-status')).toContainText('0 of 5');
   await page.locator('.promise-star').first().click();
   await page.locator('#instrumental-toggle').click();
+  // AudioContext.resume() is asynchronous on Linux WebKit; capture only settled playback.
+  if (await page.evaluate(() => typeof AudioContext !== 'undefined')) {
+    await expect(page.locator('#instrumental-toggle')).toHaveAttribute('aria-pressed', 'true');
+  } else {
+    await expect(page.locator('#toast')).toContainText('Music is unavailable');
+    await expect(page.locator('#instrumental-toggle')).toHaveAttribute('aria-pressed', 'false');
+  }
   const playing = await page.locator('#instrumental-toggle').getAttribute('aria-pressed');
   await page.locator('#replay').click();
   await expect(page.locator('#home')).toBeFocused();

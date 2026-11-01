@@ -13,7 +13,10 @@ export function useLocalSong(onActivate: () => void) {
     setStatus((current) => current === 'error' ? 'error' : 'paused');
   }, []);
   const pause = useCallback(() => {
-    markPaused(); ref.current?.pause();
+    markPaused();
+    const media = ref.current;
+    // Pausing untouched media can start resource selection in WebKit despite preload="none".
+    if (media && !media.paused) media.pause();
   }, [markPaused]);
   const play = useCallback(async () => {
     const media = ref.current;
