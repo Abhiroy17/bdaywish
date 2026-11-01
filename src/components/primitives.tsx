@@ -18,7 +18,7 @@ export function Artwork({ index }: { index?: number }) {
 export function Reveal({ children, className = '' }: { children: ReactNode; className?: string }) {
   const reduce = useReducedMotion();
   return <m.div className={className} initial={false}
-    whileInView={reduce ? undefined : { y: [18, 0], opacity: [.65, 1] }}
+    whileInView={reduce ? undefined : { y: [18, 0] }}
     viewport={{ once: true, amount: .15 }} transition={{ duration: .65, ease: [.22, 1, .36, 1] }}>
     {children}
   </m.div>;

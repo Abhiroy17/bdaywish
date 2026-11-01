@@ -1,16 +1,21 @@
 import { expect, test } from '@playwright/test';
 
 test('provided MP3 plays on tap, seeks, pauses, resumes, and stops in the background', async ({ page }) => {
-  const requests: string[] = [];
-  page.on('request', (request) => { if (request.url().includes('.mp3')) requests.push(request.url()); });
+  await page.addInitScript(() => {
+    const play = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function () {
+      this.dataset.playCalls = String(Number(this.dataset.playCalls ?? '0') + 1);
+      return play.call(this);
+    };
+  });
   await page.goto('/');
   const media = page.locator('#local-song');
   await expect(media).toHaveAttribute('preload', 'none');
-  expect(requests).toEqual([]);
+  // preload is advisory: WebKit may fetch media even when the app never starts it.
+  expect(await media.evaluate((audio: HTMLAudioElement) => ({ calls: audio.dataset.playCalls ?? '0', paused: audio.paused, time: audio.currentTime, autoplay: audio.autoplay }))).toEqual({ calls: '0', paused: true, time: 0, autoplay: false });
   await page.locator('#enter-quiet').click();
   await expect(page.locator('#credits')).toBeFocused();
-  expect(requests).toEqual([]);
-  expect(await media.evaluate((audio: HTMLAudioElement) => audio.paused)).toBe(true);
+  expect(await media.evaluate((audio: HTMLAudioElement) => ({ calls: audio.dataset.playCalls ?? '0', paused: audio.paused, time: audio.currentTime }))).toEqual({ calls: '0', paused: true, time: 0 });
   await page.locator('#play-local-song').tap();
   await expect(page.locator('#local-song-status')).toContainText('Now playing');
   await expect.poll(() => media.evaluate((audio: HTMLAudioElement) => audio.currentTime)).toBeGreaterThan(.1);

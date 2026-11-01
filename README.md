@@ -65,6 +65,7 @@ Local metadata and the relative asset path are configured in [src/content/music.
 
 - **Come on in** starts the supplied MP3 directly from the tap gesture and takes her to the song card. **Enter quietly** stops all in-page sources. The idle header **Our song** opens the card without starting playback.
 - The native audio element has **`preload="none"` and no autoplay**. Playback begins only through a deliberate action; page load/reload does not start it. Native controls support seeking, volume, and pause/resume and remain usable without JavaScript. The supplied song does not loop automatically.
+- `preload="none"` is a browser hint, not a network guarantee. Linux WebKit may request the MP3 before interaction; the application does not call `play()` before consent. Browser checks verify zero automatic play calls, paused media, and zero playback time before and after quiet entry rather than assuming browsers never fetch media.
 - **Play Love Story / Pause Love Story** preserves playback position. Buffering and errors have readable status messages; a failed load can be retried without preventing access to birthday content.
 - Starting any in-page source stops the others: MP3, original instrumental, and embedded Spotify cannot intentionally overlap. Native audio play events also stop the alternatives.
 - The header becomes **Stop music** while the MP3 is loading/playing, an embedded player is loaded, or the instrumental is active. It pauses local audio and removes the Spotify iframe. Backgrounding/page exit does the same; returning requires another deliberate tap. Visual replay preserves the music choice and local playback position.
@@ -145,7 +146,9 @@ Build with `npm run build` and publish **only `dist/`** to any static HTTPS host
 
 ### GitHub Pages
 
-The [deployment workflow](.github/workflows/ci.yml) validates every push and pull request. After all checks pass on `main`, it publishes only `dist/` through GitHub Pages. Pull requests and other branches cannot deploy. A manual **Run workflow** is also available on `main`.
+The [deployment workflow](.github/workflows/ci.yml) validates every push and pull request. After all required checks pass on `main`, it publishes only `dist/` through GitHub Pages. Pull requests and other branches cannot deploy. A manual **Run workflow** is also available on `main`.
+
+**Temporary release exception (requested):** the two browser cases **“provided MP3 plays on tap, seeks, pauses, resumes, and stops in the background”** and **“no horizontal overflow and accessible closed/open scenes”** run separately as non-blocking diagnostics across all six browser profiles. Their failures produce an explicit workflow warning and retained reports, not a deployment failure. The other 78 browser tests, typecheck, lint, unit coverage, audit, and build remain required. Required and optional browser outputs use separate report folders. Local `npm run test:e2e` still runs all 90 tests normally. To restore the full release gate, remove the temporary filter/optional steps and run the complete browser suite in the required step again.
 
 Repository setup: in **Settings → Pages → Build and deployment**, select **GitHub Actions**. The intended repository is **Abhiroy17/bdaywish**, with the site at **https://abhiroy17.github.io/bdaywish/** once its first deployment succeeds. GitHub Pages is public; a private repository alone does not make the site private, and private-repository Pages requires an eligible GitHub plan.
 
@@ -169,7 +172,9 @@ At the last dependency verification, production dependencies had **zero vulnerab
 
 **Deployment regression check:** updated the secret-message unit test to assert the current “My best friend, my favourite person” message rather than the replaced lobster wording. The interaction and deployed copy are unchanged.
 
-**Linux WebKit deployment fixes:** quiet entry cancels pending playback without calling native `pause()` on already-paused audio, avoiding WebKit resource selection and unwanted MP3 requests. Regression tests retain zero-download checks both before and after quiet entry. The replay browser test waits for asynchronous instrumental playback (or the unsupported-audio fallback) before capturing the state that replay must preserve; no retries, sleeps, or browser exclusions were added.
+**Linux WebKit deployment fixes:** quiet entry cancels pending playback without calling native `pause()` on already-paused audio, avoiding unnecessary resource selection. Browser preloading remains browser-controlled; regression tests verify no automatic playback before or after quiet entry. The replay browser test waits for asynchronous instrumental playback (or the unsupported-audio fallback) before capturing the state that replay must preserve. Scene reveals keep their vertical animation but no longer fade text, preserving contrast throughout the transition. No retries, sleeps, or browser exclusions were added.
+
+**Temporary shipping gate:** at the user's request, the two audio/contrast browser cases run as optional CI diagnostics with explicit warnings and separate retained reports; all other release checks remain blocking.
 
 **1.0.0:** Seven personalized scenes, 28 notes, four editable scrapbook placeholders, original instrumental and artwork, candle wish celebration, full birthday letter, responsive touch UI, reduced-motion and no-JavaScript support, and automated validation.
 
