@@ -167,6 +167,8 @@ At the last dependency verification, production dependencies had **zero vulnerab
 
 **GitHub Pages deployment:** added gated automatic/manual deployment with least-privilege permissions and serialized releases; excluded root-level original personal media from Git while retaining prepared website assets. Darkened the lobster button's tap hint to meet WCAG AA text contrast, caught by the existing browser accessibility regression tests before publishing.
 
+**Deployment regression check:** updated the secret-message unit test to assert the current “My best friend, my favourite person” message rather than the replaced lobster wording. The interaction and deployed copy are unchanged.
+
 **1.0.0:** Seven personalized scenes, 28 notes, four editable scrapbook placeholders, original instrumental and artwork, candle wish celebration, full birthday letter, responsive touch UI, reduced-motion and no-JavaScript support, and automated validation.
 
 **Android refinement:** Galaxy Tab/Nothing-phone viewing priority, enlarged touch controls and text, safe-area and short-landscape header refinements, touch-safe hover behavior, native-swipe carousel boundary handling, and dedicated Android Chromium coverage.

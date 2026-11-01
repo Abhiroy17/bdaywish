@@ -32,7 +32,7 @@ describe('React birthday experience', () => {
     click('#coffee-mug');
     expect(document.querySelector('#coffee-note')?.textContent).toContain('reserved for you');
     click('#lobster');
-    expect(document.querySelector('#toast')?.textContent).toContain('lobster');
+    expect(document.querySelector('#toast')?.textContent).toBe('My best friend, my favourite person, my very best plot twist. ♡');
     click('.memory summary'); click('.memory summary');
     click('.reason summary'); click('.reason summary');
     expect(document.querySelector('#reason-progress')?.textContent).toContain('1 of 28');
